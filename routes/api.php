@@ -8,9 +8,16 @@ use App\Http\Controllers\AuthController;
 //     return $request->user();
 // })->middleware('auth:sanctum');
 
-Route::get('/users',[AuthController::class,'getAllUsers']);
+Route::post('/register', [AuthController::class, 'registration'])
+    ->middleware('user.exists');
 
+Route::post('/login',[AuthController::class,'login']);
 
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/users/{id}', [AuthController::class, 'getUserById']);
 
+    Route::middleware('role:admin')->group(function () {
+        Route::get('/users', [AuthController::class, 'getAllUsers']);
+    });
+});
 
-Route::post('/register', [AuthController::class, 'registration']);
